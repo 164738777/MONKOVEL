@@ -2,26 +2,26 @@ apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.monke.monkeybook"
         minSdkVersion 17
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 9
         versionName "1.2.4"
         manifestPlaceholders = [UMENG_CHANNEL_VALUE: "debug"]
     }
 
-    productFlavors{
+/*    productFlavors{
         baidu {
             manifestPlaceholders = [UMENG_CHANNEL_VALUE: "baidu"]
         }
         pyger{
             manifestPlaceholders = [UMENG_CHANNEL_VALUE: "pyger"]
         }
-    }
+    }*/
 
     lintOptions {
         abortOnError false
@@ -31,7 +31,7 @@ android {
             buildConfigField "boolean", "IS_RELEASE", "true"
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            applicationVariants.all { variant ->
+/*            applicationVariants.all { variant ->
                 variant.outputs.each { output ->
                     def outputFile = output.outputFile
                     if (outputFile != null && outputFile.name.endsWith('.apk')) {
@@ -40,7 +40,7 @@ android {
                         output.outputFile = new File(outputFile.parent, fileName)
                     }
                 }
-            }
+            }*/
         }
         debug {
             buildConfigField "boolean", "IS_RELEASE", "false"
@@ -62,34 +62,56 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile(name: 'autoupdatesdk-release', ext: 'aar')
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:cardview-v7:25.1.0'
-    compile 'com.android.support:support-compat:25.1.0'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.android.support:support-compat:26.1.0'
     compile project(':basemvplib')
+    
     //GreenDao
-    compile 'org.greenrobot:greendao:3.0.1'
-    compile 'org.greenrobot:greendao-generator:3.0.0'
+    compile 'org.greenrobot:greendao:3.2.2'
+    compile 'org.greenrobot:greendao-generator:3.2.2'
+
     //JSOUP
-    compile 'org.jsoup:jsoup:1.10.2'
-    //沉浸式状态栏
+    compile 'org.jsoup:jsoup:1.11.2'
+
+    // 沉浸式状态栏
+    // https://github.com/ZhangQinhao/ImmerseLayout
     compile 'com.zhangmonke:ImmerseLayout:1.1.1'
-    //ProgressBar
+
+    // ProgressBar
+    // https://github.com/ZhangQinhao/MProgressBar
     compile 'com.zhangmonke:MProgressBar:1.0.1'
-    //Glide
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    //AutofitTextView
+
+    // Glide
+    compile 'com.github.bumptech.glide:glide:3.8.0'
+
+    // AutofitTextView
+    // https://github.com/grantland/android-autofittextview
     compile 'me.grantland:autofittextview:0.2.1'
-    //删除粒子效果
+
+    // 删除粒子效果
+    // https://github.com/tyrantgit/ExplosionField
     compile 'tyrantgit:explosionfield:1.0.1'
-    //View简易动画
-    compile 'com.daimajia.easing:library:2.0@aar'
-    compile 'com.daimajia.androidanimations:library:2.2@aar'
-    //CircleImageView
-    compile 'de.hdodenhof:circleimageview:2.1.0'
-    //SwitchButton
+
+    // View简易动画
+    // https://github.com/daimajia/AnimationEasingFunctions
+    // https://github.com/daimajia/AndroidViewAnimations
+    compile 'com.daimajia.easing:library:2.1@aar'
+    compile 'com.daimajia.androidanimations:library:2.3@aar'
+
+    // CircleImageView
+    // https://github.com/hdodenhof/CircleImageView
+    compile 'de.hdodenhof:circleimageview:2.2.0'
+
+    // SwitchButton
+    // https://github.com/kyleduo/SwitchButton
     compile 'com.kyleduo.switchbutton:library:1.4.4'
+
+    // LoadingView
+    // https://github.com/yankai-victor/Loading
     compile 'com.victor:lib:1.0.4'
+
     compile files('libs/commons-codec-1.10-sources.jar')
     compile files('libs/juniversalchardet-1.0.3.jar')
     compile files('libs/umeng-analytics-v6.1.1.jar')
