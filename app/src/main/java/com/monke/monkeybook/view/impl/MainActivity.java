@@ -67,17 +67,17 @@ public class MainActivity extends MBaseActivity<IMainPresenter> implements IMain
     protected void bindView() {
         downloadListPop = new DownloadListPop(MainActivity.this);
 
-        rfRvShelf = (RefreshRecyclerView) findViewById(R.id.rf_rv_shelf);
+        rfRvShelf = findViewById(R.id.rf_rv_shelf);
 
-        ibMoney = (ImageButton) findViewById(R.id.ib_money);
-        ibLibrary = (ImageButton) findViewById(R.id.ib_library);
-        ibAdd = (ImageButton) findViewById(R.id.ib_add);
-        ibDownload = (ImageButton) findViewById(R.id.ib_download);
+        ibMoney = findViewById(R.id.ib_money);
+        ibLibrary = findViewById(R.id.ib_library);
+        ibAdd = findViewById(R.id.ib_add);
+        ibDownload = findViewById(R.id.ib_download);
 
         rfRvShelf.setRefreshRecyclerViewAdapter(bookShelfAdapter, new LinearLayoutManager(this));
 
-        flWarn = (FrameLayout) findViewById(R.id.fl_warn);
-        ivWarnClose = (ImageView) findViewById(R.id.iv_warn_close);
+        flWarn = findViewById(R.id.fl_warn);
+        ivWarnClose = findViewById(R.id.iv_warn_close);
     }
 
     @Override
