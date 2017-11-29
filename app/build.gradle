@@ -112,6 +112,12 @@ dependencies {
     // https://github.com/yankai-victor/Loading
     compile 'com.victor:lib:1.0.4'
 
+    // LeakCanary
+    // https://github.com/square/leakcanary
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+
     compile files('libs/commons-codec-1.10-sources.jar')
     compile files('libs/juniversalchardet-1.0.3.jar')
     compile files('libs/umeng-analytics-v6.1.1.jar')
