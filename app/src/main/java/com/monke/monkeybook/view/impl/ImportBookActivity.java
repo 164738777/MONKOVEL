@@ -72,16 +72,17 @@ public class ImportBookActivity extends MBaseActivity<IImportBookPresenter> impl
     protected void bindView() {
         moProgressHUD = new MoProgressHUD(this);
 
-        llContent = (LinearLayout) findViewById(R.id.ll_content);
-        ivReturn = (ImageButton) findViewById(R.id.iv_return);
-        tvScan = (TextView) findViewById(R.id.tv_scan);
+        llContent = findViewById(R.id.ll_content);
+        ivReturn = findViewById(R.id.iv_return);
+        tvScan = findViewById(R.id.tv_scan);
 
-        rlLoading = (RotateLoading) findViewById(R.id.rl_loading);
-        tvCount = (TextView) findViewById(R.id.tv_count);
+        rlLoading = findViewById(R.id.rl_loading);
+        tvCount = findViewById(R.id.tv_count);
 
-        tvAddshelf = (TextView) findViewById(R.id.tv_addshelf);
+        tvAddshelf = findViewById(R.id.tv_addshelf);
 
-        rcvBooks = (RecyclerView) findViewById(R.id.rcv_books);
+        rcvBooks = findViewById(R.id.rcv_books);
+
         rcvBooks.setAdapter(importBookAdapter);
         rcvBooks.setLayoutManager(new LinearLayoutManager(this));
     }
