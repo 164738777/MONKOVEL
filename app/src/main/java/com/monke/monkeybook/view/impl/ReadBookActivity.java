@@ -144,27 +144,27 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
     protected void bindView() {
         moProgressHUD = new MoProgressHUD(this);
 
-        flContent = (FrameLayout) findViewById(R.id.fl_content);
-        csvBook = (ContentSwitchView) findViewById(R.id.csv_book);
+        flContent = findViewById(R.id.fl_content);
+        csvBook = findViewById(R.id.csv_book);
         initCsvBook();
 
-        flMenu = (FrameLayout) findViewById(R.id.fl_menu);
+        flMenu = findViewById(R.id.fl_menu);
         vMenuBg = findViewById(R.id.v_menu_bg);
-        llMenuTop = (LinearLayout) findViewById(R.id.ll_menu_top);
-        llMenuBottom = (LinearLayout) findViewById(R.id.ll_menu_bottom);
-        ivReturn = (ImageButton) findViewById(R.id.iv_return);
-        ivMenuMore = (ImageView) findViewById(R.id.iv_more);
-        atvTitle = (AutofitTextView) findViewById(R.id.atv_title);
+        llMenuTop = findViewById(R.id.ll_menu_top);
+        llMenuBottom = findViewById(R.id.ll_menu_bottom);
+        ivReturn = findViewById(R.id.iv_return);
+        ivMenuMore = findViewById(R.id.iv_more);
+        atvTitle = findViewById(R.id.atv_title);
 
-        tvPre = (TextView) findViewById(R.id.tv_pre);
-        tvNext = (TextView) findViewById(R.id.tv_next);
-        hpbReadProgress = (MHorProgressBar) findViewById(R.id.hpb_read_progress);
-        llCatalog = (LinearLayout) findViewById(R.id.ll_catalog);
-        llLight = (LinearLayout) findViewById(R.id.ll_light);
-        llFont = (LinearLayout) findViewById(R.id.ll_font);
-        llSetting = (LinearLayout) findViewById(R.id.ll_setting);
+        tvPre = findViewById(R.id.tv_pre);
+        tvNext = findViewById(R.id.tv_next);
+        hpbReadProgress = findViewById(R.id.hpb_read_progress);
+        llCatalog = findViewById(R.id.ll_catalog);
+        llLight = findViewById(R.id.ll_light);
+        llFont = findViewById(R.id.ll_font);
+        llSetting = findViewById(R.id.ll_setting);
 
-        chapterListView = (ChapterListView) findViewById(R.id.clp_chapterlist);
+        chapterListView = findViewById(R.id.clp_chapterlist);
     }
 
     @Override
@@ -284,8 +284,9 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
                 if ((realDur - 1) != mPresenter.getBookShelf().getDurChapter()) {
                     csvBook.setInitData(realDur - 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DURPAGEINDEXBEGIN);
                 }
-                if (hpbReadProgress.getDurProgress() != realDur)
+                if (hpbReadProgress.getDurProgress() != realDur) {
                     hpbReadProgress.setDurProgress(realDur);
+                }
             }
 
             @Override
@@ -329,12 +330,14 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
             public void updateProgress(int chapterIndex, int pageIndex) {
                 mPresenter.updateProgress(chapterIndex, pageIndex);
 
-                if (mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size() > 0)
+                if (mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size() > 0) {
                     atvTitle.setText(mPresenter.getBookShelf().getBookInfoBean().getChapterlist().get(mPresenter.getBookShelf().getDurChapter()).getDurChapterName());
-                else
+                } else {
                     atvTitle.setText("无章节");
-                if (hpbReadProgress.getDurProgress() != chapterIndex + 1)
+                }
+                if (hpbReadProgress.getDurProgress() != chapterIndex + 1) {
                     hpbReadProgress.setDurProgress(chapterIndex + 1);
+                }
             }
 
             @Override
@@ -455,9 +458,9 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Boolean mo = moProgressHUD.onKeyDown(keyCode, event);
-        if (mo)
-            return mo;
-        else {
+        if (mo) {
+            return true;
+        } else {
             if (keyCode == KeyEvent.KEYCODE_BACK) {
                 if (flMenu.getVisibility() == View.VISIBLE) {
                     llMenuTop.startAnimation(menuTopOut);
@@ -468,17 +471,18 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
                     return true;
                 } else {
                     Boolean temp2 = chapterListView.dimissChapterList();
-                    if (temp2)
+                    if (temp2) {
                         return true;
-                    else {
+                    } else {
                         finish();
                         return true;
                     }
                 }
             } else {
                 Boolean temp = csvBook.onKeyDown(keyCode, event);
-                if (temp)
+                if (temp) {
                     return true;
+                }
             }
             return super.onKeyDown(keyCode, event);
         }
@@ -486,10 +490,7 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        Boolean temp = csvBook.onKeyUp(keyCode, event);
-        if (temp)
-            return true;
-        return super.onKeyUp(keyCode, event);
+        return csvBook.onKeyUp(keyCode, event) || super.onKeyUp(keyCode, event);
     }
 
     @Override

@@ -132,6 +132,7 @@ public class MainActivity extends MBaseActivity<IMainPresenter> implements IMain
 
             @Override
             public void onLongClick(View animView, BookShelfBean bookShelfBean, int index) {
+                // TODO 如果不用动画效果，可以考虑换成Popup或者Dialog。
                 Intent intent = new Intent(MainActivity.this, BookDetailActivity.class);
                 intent.putExtra("from", BookDetailPresenterImpl.FROM_BOOKSHELF);
                 String key = String.valueOf(System.currentTimeMillis());
