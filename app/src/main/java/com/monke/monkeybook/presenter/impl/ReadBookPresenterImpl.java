@@ -60,7 +60,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
     private int pageLineCount = 5;   //假设5行一页
 
     public ReadBookPresenterImpl() {
-
     }
 
     @Override

@@ -84,13 +84,13 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
     private MoProgressHUD moProgressHUD;
 
     @Override
-    protected IBookReadPresenter initInjector() {
-        return new ReadBookPresenterImpl();
+    protected void onCreateActivity() {
+        setContentView(R.layout.activity_bookread);
     }
 
     @Override
-    protected void onCreateActivity() {
-        setContentView(R.layout.activity_bookread);
+    protected IBookReadPresenter initInjector() {
+        return new ReadBookPresenterImpl();
     }
 
     @Override
