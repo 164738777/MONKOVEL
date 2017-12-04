@@ -1,9 +1,6 @@
 package com.monke.monkeybook.widget.contentswitchview;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Paint;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +15,9 @@ import com.monke.monkeybook.widget.MTextView;
 
 import java.util.List;
 
+/**
+ * 阅读主View
+ */
 public class BookContentView extends FrameLayout {
     public long qTag = System.currentTimeMillis();
 
@@ -45,11 +45,10 @@ public class BookContentView extends FrameLayout {
     private int pageAll;
 
     private ContentSwitchView.LoadDataListener loadDataListener;
-
     private SetDataListener setDataListener;
 
     public interface SetDataListener {
-        public void setDataFinish(BookContentView bookContentView, int durChapterIndex, int chapterAll, int durPageIndex, int pageAll, int fromPageIndex);
+        void setDataFinish(BookContentView bookContentView, int durChapterIndex, int chapterAll, int durPageIndex, int pageAll, int fromPageIndex);
     }
 
     public BookContentView(Context context) {
@@ -65,26 +64,20 @@ public class BookContentView extends FrameLayout {
         init();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public BookContentView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
     private void init() {
         view = LayoutInflater.from(getContext()).inflate(R.layout.adapter_content_switch_item, this, false);
         addView(view);
-        ivBg = (ImageView) view.findViewById(R.id.iv_bg);
-        tvTitle = (TextView) view.findViewById(R.id.tv_title);
-        llContent = (LinearLayout) view.findViewById(R.id.ll_content);
-        tvContent = (com.monke.monkeybook.widget.MTextView) view.findViewById(R.id.tv_content);
+        ivBg = view.findViewById(R.id.iv_bg);
+        tvTitle = view.findViewById(R.id.tv_title);
+        llContent = view.findViewById(R.id.ll_content);
+        tvContent = view.findViewById(R.id.tv_content);
         vBottom = view.findViewById(R.id.v_bottom);
-        tvPage = (TextView) view.findViewById(R.id.tv_page);
+        tvPage = view.findViewById(R.id.tv_page);
 
-        tvLoading = (TextView) view.findViewById(R.id.tv_loading);
-        llError = (LinearLayout) view.findViewById(R.id.ll_error);
-        tvErrorInfo = (TextView) view.findViewById(R.id.tv_error_info);
-        tvLoadAgain = (TextView) view.findViewById(R.id.tv_load_again);
+        tvLoading = view.findViewById(R.id.tv_loading);
+        llError = view.findViewById(R.id.ll_error);
+        tvErrorInfo = view.findViewById(R.id.tv_error_info);
+        tvLoadAgain = view.findViewById(R.id.tv_load_again);
 
         tvLoadAgain.setOnClickListener(new OnClickListener() {
             @Override
@@ -95,6 +88,9 @@ public class BookContentView extends FrameLayout {
         });
     }
 
+    /**
+     * 隐藏错误、重试布局，执行请求。
+     */
     public void loading() {
         llError.setVisibility(GONE);
         tvLoading.setVisibility(VISIBLE);
@@ -106,6 +102,9 @@ public class BookContentView extends FrameLayout {
         }
     }
 
+    /**
+     * 隐藏错误、记载布局，显示内容布局。
+     */
     public void finishLoading() {
         llError.setVisibility(GONE);
         llContent.setVisibility(VISIBLE);
@@ -237,11 +236,19 @@ public class BookContentView extends FrameLayout {
         return (int) ((height * 1.0f - tvContent.getLineSpacingExtra()) / (textHeight + tvContent.getLineSpacingExtra()));
     }
 
+    /**
+     * 加载用户设置（或者默认预设）的字体大小、颜色、背景颜色 进阅读View
+     * @param readBookControl
+     */
     public void setReadBookControl(ReadBookControl readBookControl) {
         setTextKind(readBookControl);
         setBg(readBookControl);
     }
 
+    /**
+     * 加载用户设置（或者默认预设）的各种子View颜色 进阅读View
+     * @param readBookControl
+     */
     public void setBg(ReadBookControl readBookControl) {
         ivBg.setImageResource(readBookControl.getTextBackground());
         tvTitle.setTextColor(readBookControl.getTextColor());
@@ -252,6 +259,10 @@ public class BookContentView extends FrameLayout {
         tvErrorInfo.setTextColor(readBookControl.getTextColor());
     }
 
+    /**
+     * 加载用户设置（或者默认预设）的字体大小、间隔 进阅读View
+     * @param readBookControl
+     */
     public void setTextKind(ReadBookControl readBookControl) {
         tvContent.setTextSize(readBookControl.getTextSize());
         tvContent.setLineSpacing(readBookControl.getTextExtra(), 1);

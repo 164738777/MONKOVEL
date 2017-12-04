@@ -2,10 +2,8 @@ package com.monke.monkeybook.widget.contentswitchview;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Paint;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -13,17 +11,23 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
 import com.monke.monkeybook.ReadBookControl;
 import com.monke.monkeybook.utils.DensityUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 阅读主View的容器类
+ */
 public class ContentSwitchView extends FrameLayout implements BookContentView.SetDataListener {
     private final long animDuration = 300;
     public final static int NONE = -1;
     public final static int PREANDNEXT = 0;
     public final static int ONLYPRE = 1;
     public final static int ONLYNEXT = 2;
+
     private int state = NONE;    //0是有上一页   也有下一页 ;  2是只有下一页  ；1是只有上一页;-1是没有上一页 也没有下一页；
 
     private int scrollX;
@@ -31,39 +35,35 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
 
     private BookContentView durPageView;
     private List<BookContentView> viewContents;
-
-    public interface OnBookReadInitListener{
-        public void success();
-    }
     private OnBookReadInitListener bookReadInitListener;
+    private ReadBookControl readBookControl;
+
+    /**
+     * 用于反馈阅读TextView的初始化完成。
+     */
+    public interface OnBookReadInitListener{
+        void success();
+    }
 
     public ContentSwitchView(Context context) {
-        super(context);
-        init();
+        this(context, null);
     }
 
     public ContentSwitchView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, 0);
     }
 
-    public ContentSwitchView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+    public ContentSwitchView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
         init();
     }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ContentSwitchView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
-    private ReadBookControl readBookControl;
 
     private void init() {
         readBookControl = ReadBookControl.getInstance();
 
         scrollX = DensityUtil.dp2px(getContext(), 30f);
+
+        // 初始化阅读View，加载字体大小以及各种子View的颜色
         durPageView = new BookContentView(getContext());
         durPageView.setReadBookControl(readBookControl);
 
@@ -78,6 +78,7 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
         this.bookReadInitListener = bookReadInitListener;
         durPageView.getTvContent().getViewTreeObserver().addOnGlobalLayoutListener(layoutInitListener);
     }
+
     public void startLoading(){
         int height = durPageView.getTvContent().getHeight();
         if (height > 0) {
@@ -428,15 +429,17 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
         Toast.makeText(getContext(), "没有下一页", Toast.LENGTH_SHORT).show();
     }
 
+    // 用于反馈阅读TextView的初始化完成。
     private ViewTreeObserver.OnGlobalLayoutListener layoutInitListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {
-            if(bookReadInitListener !=null){
+            if (bookReadInitListener != null) {
                 bookReadInitListener.success();
             }
             durPageView.getTvContent().getViewTreeObserver().removeOnGlobalLayoutListener(layoutInitListener);
         }
     };
+
     private ViewTreeObserver.OnGlobalLayoutListener layoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {

@@ -9,18 +9,21 @@ import android.util.AttributeSet;
 
 /**
  * Created by ZQH on 2017/4/10.
+ * 作用：初步鉴定是一个自动换行的TextView. 目前只用于阅读界面中。
  */
 
 public class MTextView extends android.support.v7.widget.AppCompatTextView {
 
-    public MTextView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public MTextView(Context context) {
+        this(context, null);
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right,
-                            int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
+    public MTextView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public MTextView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
     }
 
     @Override

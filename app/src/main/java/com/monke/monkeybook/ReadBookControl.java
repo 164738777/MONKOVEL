@@ -9,11 +9,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 作用：保存、获取 字体大小、颜色、背景颜色的单例类。
+ */
 public class ReadBookControl {
     public static final int DEFAULT_TEXT = 2;
     public static final int DEFAULT_BG = 1;
 
+    // 预设的字体大小List
     private static List<Map<String,Integer>> textKind;
+    // 预设的字体、背景颜色List
     private static List<Map<String,Integer>> textDrawable;
 
     private int textSize;
@@ -41,6 +46,7 @@ public class ReadBookControl {
         }
         return readBookControl;
     }
+
     private ReadBookControl(){
         if(null == textKind){
             textKind = new ArrayList<>();
