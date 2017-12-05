@@ -9,11 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.widget.ChapterListView;
 
-public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.Viewholder> {
+/**
+ * 阅读主界面章节ListView的Adapter
+ */
+public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.ViewHolder> {
     private BookShelfBean bookShelfBean;
     private ChapterListView.OnItemClickListener itemClickListener;
     private int index = 0;
@@ -25,12 +29,12 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
     }
 
     @Override
-    public Viewholder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new Viewholder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_adapter_chapterlist, parent, false));
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_adapter_chapterlist, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(Viewholder holder, final int posiTion) {
+    public void onBindViewHolder(ViewHolder holder, final int posiTion) {
         if (posiTion == getItemCount() - 1) {
             holder.vLine.setVisibility(View.INVISIBLE);
         } else
@@ -61,21 +65,22 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
 
     @Override
     public int getItemCount() {
-        if (bookShelfBean == null)
+        if (bookShelfBean == null) {
             return 0;
-        else
+        } else {
             return bookShelfBean.getBookInfoBean().getChapterlist().size();
+        }
     }
 
-    public class Viewholder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private FrameLayout flContent;
         private TextView tvName;
         private View vLine;
 
-        public Viewholder(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
-            flContent = (FrameLayout) itemView.findViewById(R.id.fl_content);
-            tvName = (TextView) itemView.findViewById(R.id.tv_name);
+            flContent = itemView.findViewById(R.id.fl_content);
+            tvName = itemView.findViewById(R.id.tv_name);
             vLine = itemView.findViewById(R.id.v_line);
         }
     }

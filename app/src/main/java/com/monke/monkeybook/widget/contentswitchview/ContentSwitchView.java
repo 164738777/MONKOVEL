@@ -73,7 +73,9 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
         addView(durPageView);
     }
 
-
+    /**
+     * 设置监听阅读TextView初始化完成时候
+     */
     public void bookReadInit(OnBookReadInitListener bookReadInitListener){
         this.bookReadInitListener = bookReadInitListener;
         durPageView.getTvContent().getViewTreeObserver().addOnGlobalLayoutListener(layoutInitListener);

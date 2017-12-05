@@ -176,6 +176,7 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
         csvBook.bookReadInit(new ContentSwitchView.OnBookReadInitListener() {
             @Override
             public void success() {
+                // 阅读TextView 初始化完成，开始加载数据。
                 mPresenter.initData(ReadBookActivity.this);
             }
         });
@@ -183,6 +184,8 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
 
     @Override
     public void initPop() {
+        // 初始化加入书架Pop
+        // FIXME 不应该看情况来初始化与否？
         checkAddShelfPop = new CheckAddShelfPop(this, mPresenter.getBookShelf().getBookInfoBean().getName(), new CheckAddShelfPop.OnItemClickListener() {
             @Override
             public void clickExit() {
@@ -195,6 +198,7 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
                 checkAddShelfPop.dismiss();
             }
         });
+
         chapterListView.setData(mPresenter.getBookShelf(), new ChapterListView.OnItemClickListener() {
             @Override
             public void itemClick(int index) {
@@ -470,7 +474,7 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
                     checkAddShelfPop.showAtLocation(flContent, Gravity.CENTER, 0, 0);
                     return true;
                 } else {
-                    Boolean temp2 = chapterListView.dimissChapterList();
+                    Boolean temp2 = chapterListView.dismissChapterList();
                     if (temp2) {
                         return true;
                     } else {

@@ -12,11 +12,15 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.widget.checkbox.SmoothCheckBox;
 import com.monke.mprogressbar.MHorProgressBar;
 import com.monke.mprogressbar.OnProgressListener;
 
+/**
+ * 作用：阅读主界面的调节亮度Popup
+ */
 public class WindowLightPop extends PopupWindow {
     private Context mContext;
     private View view;
@@ -34,7 +38,8 @@ public class WindowLightPop extends PopupWindow {
 
         view = LayoutInflater.from(mContext).inflate(R.layout.view_pop_windowlight, null);
         this.setContentView(view);
-        initData();
+
+        getSettingDataFromSP();
         initView();
         bindEvent();
 
@@ -44,15 +49,15 @@ public class WindowLightPop extends PopupWindow {
         setAnimationStyle(R.style.anim_pop_windowlight);
     }
 
-    private void initData() {
+    private void getSettingDataFromSP() {
         isFollowSys = getIsFollowSys();
         light = getLight();
     }
 
     private void initView() {
-        hpbLight = (MHorProgressBar) view.findViewById(R.id.hpb_light);
-        llFollowSys = (LinearLayout) view.findViewById(R.id.ll_follow_sys);
-        scbFollowSys = (SmoothCheckBox) view.findViewById(R.id.scb_follow_sys);
+        hpbLight = view.findViewById(R.id.hpb_light);
+        llFollowSys = view.findViewById(R.id.ll_follow_sys);
+        scbFollowSys = view.findViewById(R.id.scb_follow_sys);
     }
 
     private void bindEvent() {
@@ -66,21 +71,23 @@ public class WindowLightPop extends PopupWindow {
                 }
             }
         });
+
         scbFollowSys.setOnCheckedChangeListener(new SmoothCheckBox.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(SmoothCheckBox checkBox, boolean isChecked) {
                 isFollowSys = isChecked;
                 if (isChecked) {
-                    //跟随系统
+                    // 跟随系统, 禁止自定义亮度
                     hpbLight.setCanTouch(false);
                     setScreenBrightness();
                 } else {
-                    //不跟随系统
+                    // 不跟随系统, 开启自定义亮度
                     hpbLight.setCanTouch(true);
                     hpbLight.setDurProgress(light);
                 }
             }
         });
+
         hpbLight.setProgressListener(new OnProgressListener() {
             @Override
             public void moveStartProgress(float dur) {
@@ -107,18 +114,19 @@ public class WindowLightPop extends PopupWindow {
         });
     }
 
-    public void setScreenBrightness(int value) {
+    private void setScreenBrightness(int value) {
         WindowManager.LayoutParams params = ((Activity) mContext).getWindow().getAttributes();
         params.screenBrightness = value * 1.0f / 255f;
         ((Activity) mContext).getWindow().setAttributes(params);
     }
-    public void setScreenBrightness() {
+
+    private void setScreenBrightness() {
         WindowManager.LayoutParams params = ((Activity) mContext).getWindow().getAttributes();
         params.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
         ((Activity) mContext).getWindow().setAttributes(params);
     }
 
-    public int getScreenBrightness() {
+    private int getScreenBrightness() {
         int value = 0;
         ContentResolver cr = mContext.getContentResolver();
         try {
@@ -156,13 +164,13 @@ public class WindowLightPop extends PopupWindow {
     @Override
     public void showAtLocation(View parent, int gravity, int x, int y) {
         super.showAtLocation(parent, gravity, x, y);
-        initData();
+        getSettingDataFromSP();
         hpbLight.setDurProgress(light);
         scbFollowSys.setChecked(isFollowSys);
     }
 
-    public void initLight(){
-        if(!isFollowSys){
+    public void initLight() {
+        if (!isFollowSys) {
             setScreenBrightness(light);
         }
     }

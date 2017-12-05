@@ -69,9 +69,12 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
         if (open_from == OPEN_FROM_APP) {
             String key = intent.getStringExtra("data_key");
             bookShelf = (BookShelfBean) BitIntentDataManager.getInstance().getData(key);
+
+            // 如果是网络书籍
             if (!bookShelf.getTag().equals(BookShelfBean.LOCAL_TAG)) {
                 mView.showDownloadMenu();
             }
+
             BitIntentDataManager.getInstance().cleanData(key);
             checkInShelf();
         } else {
@@ -336,14 +339,12 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 List<BookShelfBean> temp = DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().queryBuilder().where(BookShelfBeanDao.Properties.NoteUrl.eq(bookShelf.getNoteUrl())).build().list();
-                if (temp == null || temp.size() == 0) {
-                    isAdd = false;
-                } else
-                    isAdd = true;
+                isAdd = (temp != null && temp.size() > 0);
                 e.onNext(isAdd);
                 e.onComplete();
             }
         }).subscribeOn(Schedulers.io())
+                // 指定onDestroy方法被调用时取消订阅，释放context引用，防止内存泄漏。需要在subscribeOn方法之后使用
                 .compose(((BaseActivity) mView.getContext()).<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {

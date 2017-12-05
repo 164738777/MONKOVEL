@@ -2,11 +2,8 @@ package com.monke.monkeybook.widget;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Rect;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,13 +13,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.DensityUtil;
 
+/**
+ * 作用：阅读主界面章节列表的滚动条View
+ */
 public class RecyclerViewBar extends LinearLayout {
     public static long SLIDE_ANIM_TIME = 800;
 
@@ -44,12 +43,6 @@ public class RecyclerViewBar extends LinearLayout {
 
     public RecyclerViewBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(attrs);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public RecyclerViewBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         init(attrs);
     }
 

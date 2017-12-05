@@ -10,11 +10,16 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.ReadBookControl;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class FontPop extends PopupWindow{
+/**
+ * 作用：阅读主界面设置字体大小、字体颜色、背景颜色的Popup
+ */
+public class FontPop extends PopupWindow {
     private Context mContext;
     private View view;
     private FrameLayout flSmaller;
@@ -28,14 +33,15 @@ public class FontPop extends PopupWindow{
 
     private ReadBookControl readBookControl;
 
-    public interface OnChangeProListener{
-        public void textChange(int index);
+    public interface OnChangeProListener {
+        void textChange(int index);
 
-        public void bgChange(int index);
+        void bgChange(int index);
     }
+
     private OnChangeProListener changeProListener;
 
-    public FontPop(Context context,@NonNull OnChangeProListener changeProListener){
+    public FontPop(Context context, @NonNull OnChangeProListener changeProListener) {
         super(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         this.mContext = context;
         this.changeProListener = changeProListener;
@@ -46,24 +52,97 @@ public class FontPop extends PopupWindow{
         bindView();
         bindEvent();
 
+        // FIXME 设置Popup背景为圆角，貌似不起作用
         setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.shape_pop_checkaddshelf_bg));
         setFocusable(true);
         setTouchable(true);
         setAnimationStyle(R.style.anim_pop_windowlight);
     }
 
+    private void initData() {
+        readBookControl = ReadBookControl.getInstance();
+    }
+
+    private void bindView() {
+        flSmaller = view.findViewById(R.id.fl_smaller);
+        flBigger = view.findViewById(R.id.fl_bigger);
+        tvTextSizedDefault = view.findViewById(R.id.tv_textsize_default);
+        tvTextSize = view.findViewById(R.id.tv_dur_textsize);
+        updateText(readBookControl.getTextKindIndex());
+
+        civBgWhite = view.findViewById(R.id.civ_bg_white);
+        civBgYellow = view.findViewById(R.id.civ_bg_yellow);
+        civBgGreen = view.findViewById(R.id.civ_bg_green);
+        civBgBlack = view.findViewById(R.id.civ_bg_black);
+        updateBg(readBookControl.getTextDrawableIndex());
+    }
+
+    /**
+     * 设置字体大小相关的选择逻辑处理, 并且保存字体大小进SP
+     * @param textKindIndex
+     */
+    private void updateText(int textKindIndex) {
+        if (textKindIndex == 0) {
+            flSmaller.setEnabled(false);
+            flBigger.setEnabled(true);
+        } else if (textKindIndex == readBookControl.getTextKind().size() - 1) {
+            flSmaller.setEnabled(true);
+            flBigger.setEnabled(false);
+        } else {
+            flSmaller.setEnabled(true);
+            flBigger.setEnabled(true);
+
+        }
+        if (textKindIndex == ReadBookControl.DEFAULT_TEXT) {
+            tvTextSizedDefault.setEnabled(false);
+        } else {
+            tvTextSizedDefault.setEnabled(true);
+        }
+
+        tvTextSize.setText(String.valueOf(readBookControl.getTextKind().get(textKindIndex).get("textSize")));
+        readBookControl.setTextKindIndex(textKindIndex);
+    }
+
+    /**
+     * 设置颜色的选中状态（选中的颜色item的border颜色为褐色）, 并且保存选择的颜色下标进SP
+     * @param index
+     */
+    private void updateBg(int index) {
+        civBgWhite.setBorderColor(Color.parseColor("#00000000"));
+        civBgYellow.setBorderColor(Color.parseColor("#00000000"));
+        civBgGreen.setBorderColor(Color.parseColor("#00000000"));
+        civBgBlack.setBorderColor(Color.parseColor("#00000000"));
+
+        switch (index) {
+            case 0:
+                civBgWhite.setBorderColor(Color.parseColor("#F3B63F"));
+                break;
+            case 1:
+                civBgYellow.setBorderColor(Color.parseColor("#F3B63F"));
+                break;
+            case 2:
+                civBgGreen.setBorderColor(Color.parseColor("#F3B63F"));
+                break;
+            default:
+                civBgBlack.setBorderColor(Color.parseColor("#F3B63F"));
+                break;
+        }
+
+        readBookControl.setTextDrawableIndex(index);
+    }
+
     private void bindEvent() {
         flSmaller.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateText(readBookControl.getTextKindIndex()-1);
+                updateText(readBookControl.getTextKindIndex() - 1);
                 changeProListener.textChange(readBookControl.getTextKindIndex());
             }
         });
         flBigger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateText(readBookControl.getTextKindIndex()+1);
+                updateText(readBookControl.getTextKindIndex() + 1);
                 changeProListener.textChange(readBookControl.getTextKindIndex());
             }
         });
@@ -103,65 +182,5 @@ public class FontPop extends PopupWindow{
                 changeProListener.bgChange(readBookControl.getTextDrawableIndex());
             }
         });
-    }
-
-    private void bindView() {
-        flSmaller = (FrameLayout) view.findViewById(R.id.fl_smaller);
-        flBigger = (FrameLayout) view.findViewById(R.id.fl_bigger);
-        tvTextSizedDefault = (TextView) view.findViewById(R.id.tv_textsize_default);
-        tvTextSize = (TextView) view.findViewById(R.id.tv_dur_textsize);
-        updateText(readBookControl.getTextKindIndex());
-
-        civBgWhite = (CircleImageView) view.findViewById(R.id.civ_bg_white);
-        civBgYellow = (CircleImageView) view.findViewById(R.id.civ_bg_yellow);
-        civBgGreen = (CircleImageView) view.findViewById(R.id.civ_bg_green);
-        civBgBlack = (CircleImageView) view.findViewById(R.id.civ_bg_black);
-        updateBg(readBookControl.getTextDrawableIndex());
-    }
-
-    private void updateText(int textKindIndex) {
-        if(textKindIndex==0){
-            flSmaller.setEnabled(false);
-            flBigger.setEnabled(true);
-        }else if(textKindIndex == readBookControl.getTextKind().size()-1){
-            flSmaller.setEnabled(true);
-            flBigger.setEnabled(false);
-        }else{flSmaller.setEnabled(true);
-            flBigger.setEnabled(true);
-
-        }
-        if(textKindIndex == ReadBookControl.DEFAULT_TEXT){
-            tvTextSizedDefault.setEnabled(false);
-        }else{
-            tvTextSizedDefault.setEnabled(true);
-        }
-        tvTextSize.setText(String.valueOf(readBookControl.getTextKind().get(textKindIndex).get("textSize")));
-        readBookControl.setTextKindIndex(textKindIndex);
-    }
-
-    private void updateBg(int index) {
-        civBgWhite.setBorderColor(Color.parseColor("#00000000"));
-        civBgYellow.setBorderColor(Color.parseColor("#00000000"));
-        civBgGreen.setBorderColor(Color.parseColor("#00000000"));
-        civBgBlack.setBorderColor(Color.parseColor("#00000000"));
-        switch (index){
-            case 0:
-                civBgWhite.setBorderColor(Color.parseColor("#F3B63F"));
-                break;
-            case 1:
-                civBgYellow.setBorderColor(Color.parseColor("#F3B63F"));
-                break;
-            case 2:
-                civBgGreen.setBorderColor(Color.parseColor("#F3B63F"));
-                break;
-            default:
-                civBgBlack.setBorderColor(Color.parseColor("#F3B63F"));
-                break;
-        }
-        readBookControl.setTextDrawableIndex(index);
-    }
-
-    private void initData() {
-        readBookControl = ReadBookControl.getInstance();
     }
 }
