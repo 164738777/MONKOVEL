@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import me.grantland.widget.AutofitTextView;
+
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.R;
@@ -32,20 +34,20 @@ import com.monke.monkeybook.presenter.impl.ReadBookPresenterImpl;
 import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.utils.PremissionCheck;
 import com.monke.monkeybook.view.IBookReadView;
-import com.monke.monkeybook.view.popupwindow.ReadBookMenuMorePop;
-import com.monke.monkeybook.widget.ChapterListView;
 import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
 import com.monke.monkeybook.view.popupwindow.FontPop;
 import com.monke.monkeybook.view.popupwindow.MoreSettingPop;
+import com.monke.monkeybook.view.popupwindow.ReadBookMenuMorePop;
 import com.monke.monkeybook.view.popupwindow.WindowLightPop;
+import com.monke.monkeybook.widget.ChapterListView;
 import com.monke.monkeybook.widget.contentswitchview.BookContentView;
 import com.monke.monkeybook.widget.contentswitchview.ContentSwitchView;
 import com.monke.monkeybook.widget.modialog.MoProgressHUD;
 import com.monke.mprogressbar.MHorProgressBar;
 import com.monke.mprogressbar.OnProgressListener;
+
 import java.util.ArrayList;
 import java.util.List;
-import me.grantland.widget.AutofitTextView;
 
 public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implements IBookReadView {
 
@@ -169,6 +171,7 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
 
     @Override
     public void setHpbReadProgressMax(int count) {
+        // 设置最大章节进度
         hpbReadProgress.setMaxProgress(count);
     }
 
@@ -230,7 +233,7 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
                     llMenuTop.startAnimation(menuTopOut);
                     llMenuBottom.startAnimation(menuBottomOut);
                 }
-                //弹出离线下载界面
+                // 弹出离线下载界面
                 int endIndex = mPresenter.getBookShelf().getDurChapter() + 50;
                 if (endIndex >= mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size()) {
                     endIndex = mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size() - 1;

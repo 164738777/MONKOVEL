@@ -11,7 +11,10 @@ import com.kyleduo.switchbutton.SwitchButton;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.ReadBookControl;
 
-public class MoreSettingPop extends PopupWindow{
+/**
+ * 作用：阅读主界面设置Popup，目前有：音量键翻页、点击页面两侧翻下一页
+ */
+public class MoreSettingPop extends PopupWindow {
     private Context mContext;
     private View view;
 
@@ -20,11 +23,11 @@ public class MoreSettingPop extends PopupWindow{
 
     private ReadBookControl readBookControl;
 
-    public MoreSettingPop(Context context){
+    public MoreSettingPop(Context context) {
         super(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mContext = context;
 
-        view = LayoutInflater.from(mContext).inflate(R.layout.view_pop_moresetting,null);
+        view = LayoutInflater.from(mContext).inflate(R.layout.view_pop_moresetting, null);
         this.setContentView(view);
         initData();
         bindView();

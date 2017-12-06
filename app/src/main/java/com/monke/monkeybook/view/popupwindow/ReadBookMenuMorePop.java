@@ -9,16 +9,19 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import com.monke.monkeybook.R;
 
-public class ReadBookMenuMorePop extends PopupWindow{
+/**
+ * 作用：离线下载按钮Popup
+ */
+public class ReadBookMenuMorePop extends PopupWindow {
     private Context mContext;
     private View view;
 
     private LinearLayout llDownload;
 
-    public ReadBookMenuMorePop(Context context){
-        super(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+    public ReadBookMenuMorePop(Context context) {
+        super(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         this.mContext = context;
-        view = LayoutInflater.from(mContext).inflate(R.layout.view_pop_menumore,null);
+        view = LayoutInflater.from(mContext).inflate(R.layout.view_pop_menumore, null);
         this.setContentView(view);
 
         initView();
@@ -30,10 +33,10 @@ public class ReadBookMenuMorePop extends PopupWindow{
     }
 
     private void initView() {
-        llDownload = (LinearLayout) view.findViewById(R.id.ll_download);
+        llDownload = view.findViewById(R.id.ll_download);
     }
 
-    public void setOnClickDownload(View.OnClickListener clickDownload){
+    public void setOnClickDownload(View.OnClickListener clickDownload) {
         llDownload.setOnClickListener(clickDownload);
     }
 }
