@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import me.grantland.widget.AutofitTextView;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.AppActivityManager;
@@ -48,6 +47,8 @@ import com.monke.mprogressbar.OnProgressListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import me.grantland.widget.AutofitTextView;
 
 public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implements IBookReadView {
 
@@ -526,7 +527,9 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 0x11) {
-            if (grantResults != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && PremissionCheck.checkPremission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && PremissionCheck.checkPremission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 mPresenter.openBookFromOther(ReadBookActivity.this);
             } else {
                 if (!this.shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
