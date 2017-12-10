@@ -13,13 +13,8 @@ import android.provider.MediaStore;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 import android.widget.Toast;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.impl.BaseActivity;
@@ -46,6 +41,13 @@ import com.trello.rxlifecycle2.android.ActivityEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> implements IBookReadPresenter {
 
@@ -153,27 +155,32 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
 
     @Override
     public void loadContent(final BookContentView bookContentView, final long bookTag, final int chapterIndex, int pageIndex) {
+        Log.d("MyLog", "loadContent: bookTag " + bookTag + " , chapterIndex " + chapterIndex + " , pageIndex " + pageIndex);
         if (null != bookShelf && bookShelf.getBookInfoBean().getChapterlist().size() > 0) {
-            if (null != bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean() && null != bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().getDurCapterContent()) {
-                if (bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().getLineSize() == mView.getPaint().getTextSize() && bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().getLineContent().size() > 0) {
+
+            BookContentBean bookContentBean = bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean();
+            Log.d("MyLog", "loadContent: " + bookContentBean);
+
+            if (null != bookContentBean && null != bookContentBean.getDurCapterContent()) {
+
+                List<String> lineContent = bookContentBean.getLineContent();
+                float lineSize = bookContentBean.getLineSize();
+
+                if (lineContent.size() > 0 && lineSize == mView.getPaint().getTextSize()) {
                     //已有数据
-                    int tempCount = (int) Math.ceil(bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().getLineContent().size() * 1.0 / pageLineCount) - 1;
+                    int tempCount = (int) Math.ceil(lineContent.size() * 1.0 / pageLineCount) - 1;
 
                     if (pageIndex == BookContentView.DURPAGEINDEXBEGIN) {
                         pageIndex = 0;
-                    } else if (pageIndex == BookContentView.DURPAGEINDEXEND) {
+                    } else if (pageIndex == BookContentView.DURPAGEINDEXEND || pageIndex >= tempCount) {
                         pageIndex = tempCount;
-                    } else {
-                        if (pageIndex >= tempCount) {
-                            pageIndex = tempCount;
-                        }
                     }
 
                     int start = pageIndex * pageLineCount;
-                    int end = pageIndex == tempCount ? bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().getLineContent().size() : start + pageLineCount;
+                    int end = pageIndex == tempCount ? lineContent.size() : start + pageLineCount;
                     if (bookContentView != null && bookTag == bookContentView.getqTag()) {
                         bookContentView.updateData(bookTag, bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getDurChapterName()
-                                , bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().getLineContent().subList(start, end)
+                                , lineContent.subList(start, end)
                                 , chapterIndex
                                 , bookShelf.getBookInfoBean().getChapterlist().size()
                                 , pageIndex
@@ -181,17 +188,18 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
                     }
                 } else {
                     //有元数据  重新分行
-                    bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().setLineSize(mView.getPaint().getTextSize());
+                    bookContentBean.setLineSize(mView.getPaint().getTextSize());
                     final int finalPageIndex = pageIndex;
-                    SeparateParagraphtoLines(bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().getDurCapterContent())
+                    SeparateParagraphtoLines(bookContentBean.getDurCapterContent())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.io())
                             .compose(((BaseActivity) mView.getContext()).<List<String>>bindUntilEvent(ActivityEvent.DESTROY))
                             .subscribe(new SimpleObserver<List<String>>() {
                                 @Override
                                 public void onNext(List<String> value) {
-                                    bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().getLineContent().clear();
-                                    bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().getLineContent().addAll(value);
+                                    List<String> lineContent1 = bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean().getLineContent();
+                                    lineContent1.clear();
+                                    lineContent1.addAll(value);
                                     loadContent(bookContentView, bookTag, chapterIndex, finalPageIndex);
                                 }
 

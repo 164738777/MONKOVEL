@@ -9,10 +9,10 @@ import org.greenrobot.greendao.annotation.Transient;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
- * 章节列表
+ * 章节列表Bean
  */
 @Entity
-public class ChapterListBean implements Parcelable,Cloneable{
+public class ChapterListBean implements Parcelable, Cloneable{
 
     private String noteUrl; //对应BookInfoBean noteUrl;
 
@@ -148,5 +148,18 @@ public class ChapterListBean implements Parcelable,Cloneable{
         chapterListBean.hasCache = hasCache;
         chapterListBean.bookContentBean = new BookContentBean();
         return chapterListBean;
+    }
+
+    @Override
+    public String toString() {
+        return "ChapterListBean{" +
+                "noteUrl='" + noteUrl + '\'' +
+                ", durChapterIndex=" + durChapterIndex +
+                ", durChapterUrl='" + durChapterUrl + '\'' +
+                ", durChapterName='" + durChapterName + '\'' +
+                ", tag='" + tag + '\'' +
+                ", hasCache=" + hasCache +
+                ", bookContentBean=" + bookContentBean +
+                '}';
     }
 }

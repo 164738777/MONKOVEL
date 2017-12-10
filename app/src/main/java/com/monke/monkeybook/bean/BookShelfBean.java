@@ -141,4 +141,16 @@ public class BookShelfBean implements Parcelable,Cloneable{
         bookShelfBean.bookInfoBean = (BookInfoBean) bookInfoBean.clone();
         return bookShelfBean;
     }
+
+    @Override
+    public String toString() {
+        return "BookShelfBean{" +
+                "noteUrl='" + noteUrl + '\'' +
+                ", durChapter=" + durChapter +
+                ", durChapterPage=" + durChapterPage +
+                ", finalDate=" + finalDate +
+                ", tag='" + tag + '\'' +
+                ", bookInfoBean=" + bookInfoBean +
+                '}';
+    }
 }

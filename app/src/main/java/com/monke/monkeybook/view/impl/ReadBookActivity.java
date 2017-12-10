@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -449,6 +450,9 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
 
     @Override
     public void initContentSuccess(int durChapterIndex, int chapterAll, int durPageIndex) {
+        Log.d("MyLog", "initContentSuccess: durChapterIndex " + durChapterIndex);
+        Log.d("MyLog", "initContentSuccess: chapterAll " + chapterAll);
+        Log.d("MyLog", "initContentSuccess: durPageIndex " + durPageIndex);
         csvBook.setInitData(durChapterIndex, chapterAll, durPageIndex);
     }
 

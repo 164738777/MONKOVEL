@@ -34,8 +34,7 @@ public class BookContentBean implements Parcelable{
     @Transient
     private float lineSize;
 
-    public BookContentBean(){
-
+    public BookContentBean() {
     }
 
     public float getLineSize() {
@@ -140,5 +139,18 @@ public class BookContentBean implements Parcelable{
 
     public void setRight(Boolean right) {
         isRight = right;
+    }
+
+    @Override
+    public String toString() {
+        return "BookContentBean{" +
+                "durChapterUrl='" + durChapterUrl + '\'' +
+                ", durChapterIndex=" + durChapterIndex +
+                ", durCapterContent='" + durCapterContent + '\'' +
+                ", tag='" + tag + '\'' +
+                ", isRight=" + isRight +
+                ", lineContent=" + lineContent +
+                ", lineSize=" + lineSize +
+                '}';
     }
 }

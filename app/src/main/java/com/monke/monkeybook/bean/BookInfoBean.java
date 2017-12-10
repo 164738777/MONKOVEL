@@ -42,8 +42,7 @@ public class BookInfoBean implements Parcelable,Cloneable{
 
     private String origin; //来源
 
-    public BookInfoBean(){
-
+    public BookInfoBean() {
     }
 
     protected BookInfoBean(Parcel in) {
@@ -209,5 +208,21 @@ public class BookInfoBean implements Parcelable,Cloneable{
             bookInfoBean.setChapterlist(newList);
         }
         return bookInfoBean;
+    }
+
+    @Override
+    public String toString() {
+        return "BookInfoBean{" +
+                "name='" + name + '\'' +
+                ", tag='" + tag + '\'' +
+                ", noteUrl='" + noteUrl + '\'' +
+                ", chapterUrl='" + chapterUrl + '\'' +
+                ", chapterlist=" + chapterlist +
+                ", finalRefreshData=" + finalRefreshData +
+                ", coverUrl='" + coverUrl + '\'' +
+                ", author='" + author + '\'' +
+                ", introduce='" + introduce + '\'' +
+                ", origin='" + origin + '\'' +
+                '}';
     }
 }

@@ -299,13 +299,20 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
         }
     }
 
+    /**
+     * 点击进入某本小说时候初始化数据
+     * @param durChapterIndex 章节下表
+     * @param chapterAll   总章节数
+     * @param durPageIndex  当前页面所在的章节的页数下标
+     */
     public void setInitData(int durChapterIndex, int chapterAll, int durPageIndex) {
         updateOtherPage(durChapterIndex, chapterAll, durPageIndex, -1);
         durPageView.setLoadDataListener(loadDataListener, this);
         durPageView.loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex) : "", durChapterIndex, chapterAll, durPageIndex);
 
-        if (loadDataListener != null)
+        if (loadDataListener != null) {
             loadDataListener.updateProgress(durPageView.getDurChapterIndex(), durPageView.getDurPageIndex());
+        }
     }
 
     private void updateOtherPage(int durChapterIndex, int chapterAll, int durPageIndex, int pageAll) {
@@ -410,10 +417,6 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
     }
 
     private LoadDataListener loadDataListener;
-
-    public LoadDataListener getLoadDataListener() {
-        return loadDataListener;
-    }
 
     public void setLoadDataListener(LoadDataListener loadDataListener) {
         this.loadDataListener = loadDataListener;

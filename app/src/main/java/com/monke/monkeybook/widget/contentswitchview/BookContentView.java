@@ -2,6 +2,7 @@ package com.monke.monkeybook.widget.contentswitchview;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -82,8 +83,9 @@ public class BookContentView extends FrameLayout {
         tvLoadAgain.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (loadDataListener != null)
+                if (loadDataListener != null) {
                     loading();
+                }
             }
         });
     }
@@ -96,7 +98,7 @@ public class BookContentView extends FrameLayout {
         tvLoading.setVisibility(VISIBLE);
         llContent.setVisibility(INVISIBLE);
         qTag = System.currentTimeMillis();
-        //执行请求操作
+        // 执行请求操作
         if (loadDataListener != null) {
             loadDataListener.loaddata(this, qTag, durChapterIndex, durPageIndex);
         }
@@ -156,10 +158,6 @@ public class BookContentView extends FrameLayout {
         tvPage.setText("");
 
         loading();
-    }
-
-    public ContentSwitchView.LoadDataListener getLoadDataListener() {
-        return loadDataListener;
     }
 
     public void setLoadDataListener(ContentSwitchView.LoadDataListener loadDataListener, SetDataListener setDataListener) {
@@ -229,11 +227,22 @@ public class BookContentView extends FrameLayout {
         return tvContent;
     }
 
+    /**
+     * 测量阅读TextView的高度来测量获取总行数。
+     * @param height
+     * @return 阅读View的总行数
+     */
     public int getLineCount(int height) {
+        Log.d("MyLog", "getLineCount:height " + height);
         float ascent = tvContent.getPaint().ascent();
         float descent = tvContent.getPaint().descent();
         float textHeight = descent - ascent;
-        return (int) ((height * 1.0f - tvContent.getLineSpacingExtra()) / (textHeight + tvContent.getLineSpacingExtra()));
+        Log.d("MyLog", "getLineCount:ascent " + ascent);
+        Log.d("MyLog", "getLineCount:descent " + descent);
+        Log.d("MyLog", "getLineCount:getLineSpacingExtra " + tvContent.getLineSpacingExtra());
+        int i = (int) ((height * 1.0f - tvContent.getLineSpacingExtra()) / (textHeight + tvContent.getLineSpacingExtra()));
+        Log.d("MyLog", "getLineCount: " + i);
+        return i;
     }
 
     /**
