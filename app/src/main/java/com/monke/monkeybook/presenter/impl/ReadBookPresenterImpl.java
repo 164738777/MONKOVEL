@@ -168,11 +168,13 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
                 float lineSize = bookContentBean.getLineSize();
 
                 Log.d("MyLog", "loadContent:lineContent " + lineContent);
+                Log.d("MyLog", "loadContent:lineContent size  " + lineContent.size());
                 Log.d("MyLog", "loadContent:lineSize " + lineSize);
                 Log.d("MyLog", "loadContent:getTextSize " + mView.getPaint().getTextSize());
 
                 if (lineContent.size() > 0 && lineSize == mView.getPaint().getTextSize()) {
-                    //已有数据
+                    // 已有数据（小说数据以及分段处理后的数据 lineContent）
+                    
                     int tempCount = (int) Math.ceil(lineContent.size() * 1.0 / pageLineCount) - 1;
 
                     if (pageIndex == BookContentView.DURPAGEINDEXBEGIN) {
@@ -192,7 +194,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
                                 , tempCount + 1);
                     }
                 } else {
-                    //有元数据  重新分行后再重新进行加载显示(重新loadContent)
+                    // 有元数据(只有小说数据，没有分段数据). 重新分行后再重新进行加载显示(重新loadContent)
                     bookContentBean.setLineSize(mView.getPaint().getTextSize());
                     final int finalPageIndex = pageIndex;
                     separateParagraphToLines(bookContentBean.getDurCapterContent())
@@ -210,8 +212,9 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
 
                                 @Override
                                 public void onError(Throwable e) {
-                                    if (bookContentView != null && bookTag == bookContentView.getqTag())
+                                    if (bookContentView != null && bookTag == bookContentView.getqTag()) {
                                         bookContentView.loadError();
+                                    }
                                 }
                             });
                 }
@@ -325,7 +328,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
     }
 
     /**
-     * 将一段文字进行分割，返回一个包含已分割好的文字的List Observable
+     * 将一段文字根据屏幕宽度显示的一行的字数，进行分割，返回一个包含已分割好的文字的List Observable
      * @param paragraphstr 一段文字
      * @return Observable
      */
