@@ -155,16 +155,21 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
 
     @Override
     public void loadContent(final BookContentView bookContentView, final long bookTag, final int chapterIndex, int pageIndex) {
-        Log.d("MyLog", "loadContent: bookTag " + bookTag + " , chapterIndex " + chapterIndex + " , pageIndex " + pageIndex);
         if (null != bookShelf && bookShelf.getBookInfoBean().getChapterlist().size() > 0) {
+            Log.d("MyLog", "loadContent: bookTag " + bookTag + " , chapterIndex " + chapterIndex + " , pageIndex " + pageIndex);
 
             BookContentBean bookContentBean = bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean();
-            Log.d("MyLog", "loadContent: " + bookContentBean);
+            Log.d("MyLog", "loadContent:bookContentBean " + bookContentBean);
 
             if (null != bookContentBean && null != bookContentBean.getDurCapterContent()) {
+                // 小说有内容
 
                 List<String> lineContent = bookContentBean.getLineContent();
                 float lineSize = bookContentBean.getLineSize();
+
+                Log.d("MyLog", "loadContent:lineContent " + lineContent);
+                Log.d("MyLog", "loadContent:lineSize " + lineSize);
+                Log.d("MyLog", "loadContent:getTextSize " + mView.getPaint().getTextSize());
 
                 if (lineContent.size() > 0 && lineSize == mView.getPaint().getTextSize()) {
                     //已有数据
@@ -187,10 +192,10 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
                                 , tempCount + 1);
                     }
                 } else {
-                    //有元数据  重新分行
+                    //有元数据  重新分行后再重新进行加载显示(重新loadContent)
                     bookContentBean.setLineSize(mView.getPaint().getTextSize());
                     final int finalPageIndex = pageIndex;
-                    SeparateParagraphtoLines(bookContentBean.getDurCapterContent())
+                    separateParagraphToLines(bookContentBean.getDurCapterContent())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.io())
                             .compose(((BaseActivity) mView.getContext()).<List<String>>bindUntilEvent(ActivityEvent.DESTROY))
@@ -319,18 +324,26 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
             return bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getDurChapterName();
     }
 
-    public Observable<List<String>> SeparateParagraphtoLines(final String paragraphstr) {
+    /**
+     * 将一段文字进行分割，返回一个包含已分割好的文字的List Observable
+     * @param paragraphstr 一段文字
+     * @return Observable
+     */
+    private Observable<List<String>> separateParagraphToLines(final String paragraphstr) {
         return Observable.create(new ObservableOnSubscribe<List<String>>() {
             @Override
             public void subscribe(ObservableEmitter<List<String>> e) throws Exception {
                 TextPaint mPaint = (TextPaint) mView.getPaint();
                 mPaint.setSubpixelText(true);
+                // StaticLayout
+                // http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2014/0915/1682.html
                 Layout tempLayout = new StaticLayout(paragraphstr, mPaint, mView.getContentWidth(), Layout.Alignment.ALIGN_NORMAL, 0, 0, false);
-                List<String> linesdata = new ArrayList<String>();
+
+                List<String> linesData = new ArrayList<>();
                 for (int i = 0; i < tempLayout.getLineCount(); i++) {
-                    linesdata.add(paragraphstr.substring(tempLayout.getLineStart(i), tempLayout.getLineEnd(i)));
+                    linesData.add(paragraphstr.substring(tempLayout.getLineStart(i), tempLayout.getLineEnd(i)));
                 }
-                e.onNext(linesdata);
+                e.onNext(linesData);
                 e.onComplete();
             }
         });

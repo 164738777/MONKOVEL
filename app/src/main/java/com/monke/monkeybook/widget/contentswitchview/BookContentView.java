@@ -91,7 +91,7 @@ public class BookContentView extends FrameLayout {
     }
 
     /**
-     * 隐藏错误、重试布局，执行请求。
+     * 隐藏错误、重试布局，加载小说data。
      */
     public void loading() {
         llError.setVisibility(GONE);
