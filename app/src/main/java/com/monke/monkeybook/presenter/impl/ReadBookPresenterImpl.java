@@ -174,7 +174,9 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
 
                 if (lineContent.size() > 0 && lineSize == mView.getPaint().getTextSize()) {
                     // 已有数据（小说数据以及分段处理后的数据 lineContent）
-                    
+
+                    Log.d("MyLog", "loadContent:pageLineCount " + pageLineCount);
+
                     int tempCount = (int) Math.ceil(lineContent.size() * 1.0 / pageLineCount) - 1;
 
                     if (pageIndex == BookContentView.DURPAGEINDEXBEGIN) {
