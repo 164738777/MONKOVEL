@@ -49,6 +49,9 @@ android {
 //            signingConfig signingConfigs.config
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 repositories{
