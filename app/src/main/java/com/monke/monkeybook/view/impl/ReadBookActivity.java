@@ -207,7 +207,7 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
         chapterListView.setData(mPresenter.getBookShelf(), new ChapterListView.OnItemClickListener() {
             @Override
             public void itemClick(int index) {
-                csvBook.setInitData(index, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DURPAGEINDEXBEGIN);
+                csvBook.setInitData(index, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DUR_PAGE_INDEX_BEGIN);
             }
         });
 
@@ -291,7 +291,7 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
                     realDur = 1;
                 }
                 if ((realDur - 1) != mPresenter.getBookShelf().getDurChapter()) {
-                    csvBook.setInitData(realDur - 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DURPAGEINDEXBEGIN);
+                    csvBook.setInitData(realDur - 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DUR_PAGE_INDEX_BEGIN);
                 }
                 if (hpbReadProgress.getDurProgress() != realDur) {
                     hpbReadProgress.setDurProgress(realDur);
@@ -371,13 +371,13 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
         tvPre.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                csvBook.setInitData(mPresenter.getBookShelf().getDurChapter() - 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DURPAGEINDEXBEGIN);
+                csvBook.setInitData(mPresenter.getBookShelf().getDurChapter() - 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DUR_PAGE_INDEX_BEGIN);
             }
         });
         tvNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                csvBook.setInitData(mPresenter.getBookShelf().getDurChapter() + 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DURPAGEINDEXBEGIN);
+                csvBook.setInitData(mPresenter.getBookShelf().getDurChapter() + 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DUR_PAGE_INDEX_BEGIN);
             }
         });
 

@@ -34,6 +34,7 @@ import com.monke.monkeybook.model.impl.ImportBookModelImpl;
 import com.monke.monkeybook.model.impl.WebBookModelImpl;
 import com.monke.monkeybook.presenter.IBookReadPresenter;
 import com.monke.monkeybook.utils.PremissionCheck;
+import com.monke.monkeybook.utils.TimeUtils;
 import com.monke.monkeybook.view.IBookReadView;
 import com.monke.monkeybook.widget.contentswitchview.BookContentView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
@@ -156,7 +157,8 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
     @Override
     public void loadContent(final BookContentView bookContentView, final long bookTag, final int chapterIndex, int pageIndex) {
         if (null != bookShelf && bookShelf.getBookInfoBean().getChapterlist().size() > 0) {
-            Log.d("MyLog", "loadContent: bookTag " + bookTag + " , chapterIndex " + chapterIndex + " , pageIndex " + pageIndex);
+            Log.d("MyLog", "loadContent: -----------------------------------------------------");
+            Log.d("MyLog", "loadContent: bookTag " + TimeUtils.getTimeStringByLongMills(bookTag) + " , chapterIndex " + chapterIndex + " , pageIndex " + pageIndex);
 
             BookContentBean bookContentBean = bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getBookContentBean();
             Log.d("MyLog", "loadContent:bookContentBean " + bookContentBean);
@@ -177,23 +179,29 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
 
                     Log.d("MyLog", "loadContent:pageLineCount " + pageLineCount);
 
+                    // tempCount 此章节页码总数下标最大值（例如有8页，tempCount = 7）
                     int tempCount = (int) Math.ceil(lineContent.size() * 1.0 / pageLineCount) - 1;
 
-                    if (pageIndex == BookContentView.DURPAGEINDEXBEGIN) {
+                    if (pageIndex == BookContentView.DUR_PAGE_INDEX_BEGIN) {
                         pageIndex = 0;
-                    } else if (pageIndex == BookContentView.DURPAGEINDEXEND || pageIndex >= tempCount) {
+                    } else if (pageIndex == BookContentView.DUR_PAGE_INDEX_END || pageIndex >= tempCount) {
                         pageIndex = tempCount;
                     }
 
                     int start = pageIndex * pageLineCount;
                     int end = pageIndex == tempCount ? lineContent.size() : start + pageLineCount;
+                    Log.d("MyLog", "loadContent:tempCount " + tempCount);
+                    Log.d("MyLog", "loadContent:pageIndex " + pageIndex);
+                    Log.d("MyLog", "loadContent:start " + start);
+                    Log.d("MyLog", "loadContent:end " + end);
                     if (bookContentView != null && bookTag == bookContentView.getqTag()) {
-                        bookContentView.updateData(bookTag, bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getDurChapterName()
-                                , lineContent.subList(start, end)
-                                , chapterIndex
-                                , bookShelf.getBookInfoBean().getChapterlist().size()
-                                , pageIndex
-                                , tempCount + 1);
+                        bookContentView.updateData(bookTag,
+                                bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getDurChapterName(),
+                                lineContent.subList(start, end),
+                                chapterIndex,
+                                bookShelf.getBookInfoBean().getChapterlist().size(),
+                                pageIndex,
+                                tempCount + 1);
                     }
                 } else {
                     // 有元数据(只有小说数据，没有分段数据). 重新分行后再重新进行加载显示(重新loadContent)

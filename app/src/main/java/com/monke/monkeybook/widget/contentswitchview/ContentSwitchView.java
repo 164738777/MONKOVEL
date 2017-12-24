@@ -363,7 +363,7 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
             if (pageAll > 0 && durPageIndex >= 0 && durPageIndex < pageAll - 1)
                 viewContents.get(temp).loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex) : "", durChapterIndex, chapterAll, durPageIndex + 1);
             else
-                viewContents.get(temp).loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex + 1) : "", durChapterIndex + 1, chapterAll, BookContentView.DURPAGEINDEXBEGIN);
+                viewContents.get(temp).loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex + 1) : "", durChapterIndex + 1, chapterAll, BookContentView.DUR_PAGE_INDEX_BEGIN);
         } else if (state == ONLYPRE || state == NONE) {
             BookContentView next = new BookContentView(getContext());
             next.setReadBookControl(readBookControl);
@@ -371,7 +371,7 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
             if (pageAll > 0 && durPageIndex >= 0 && durPageIndex < pageAll - 1)
                 next.loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex) : "", durChapterIndex, chapterAll, durPageIndex + 1);
             else
-                next.loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex + 1) : "", durChapterIndex + 1, chapterAll, BookContentView.DURPAGEINDEXBEGIN);
+                next.loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex + 1) : "", durChapterIndex + 1, chapterAll, BookContentView.DUR_PAGE_INDEX_BEGIN);
             viewContents.add(next);
             this.addView(next, 0);
         }
@@ -385,14 +385,14 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
             if (pageAll > 0 && durPageIndex >= 0 && durPageIndex > 0)
                 pre.loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex) : "", durChapterIndex, chapterAll, durPageIndex - 1);
             else
-                pre.loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex - 1) : "", durChapterIndex - 1, chapterAll, BookContentView.DURPAGEINDEXEND);
+                pre.loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex - 1) : "", durChapterIndex - 1, chapterAll, BookContentView.DUR_PAGE_INDEX_END);
             viewContents.add(0, pre);
             this.addView(pre);
         } else if (state == ONLYPRE || state == PREANDNEXT) {
             if (pageAll > 0 && durPageIndex >= 0 && durPageIndex > 0)
                 viewContents.get(0).loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex) : "", durChapterIndex, chapterAll, durPageIndex - 1);
             else
-                viewContents.get(0).loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex - 1) : "", durChapterIndex - 1, chapterAll, BookContentView.DURPAGEINDEXEND);
+                viewContents.get(0).loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex - 1) : "", durChapterIndex - 1, chapterAll, BookContentView.DUR_PAGE_INDEX_END);
         }
     }
 

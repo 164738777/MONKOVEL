@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.ReadBookControl;
+import com.monke.monkeybook.utils.TimeUtils;
 import com.monke.monkeybook.widget.MTextView;
 
 import java.util.List;
@@ -22,8 +23,8 @@ import java.util.List;
 public class BookContentView extends FrameLayout {
     public long qTag = System.currentTimeMillis();
 
-    public static final int DURPAGEINDEXBEGIN = -1;
-    public static final int DURPAGEINDEXEND = -2;
+    public static final int DUR_PAGE_INDEX_BEGIN = -1;
+    public static final int DUR_PAGE_INDEX_END = -2;
 
     private View view;
     private ImageView ivBg;
@@ -123,6 +124,12 @@ public class BookContentView extends FrameLayout {
 
     public void updateData(long tag, String title, List<String> contentLines, int durChapterIndex, int chapterAll, int durPageIndex, int durPageAll) {
         if (tag == qTag) {
+
+            Log.d("MyLog", "updateData:tag " + TimeUtils.getTimeStringByLongMills(tag)
+                    + " , title : " + title + " , contentLines : " + contentLines
+                    + " , durChapterIndex : " + durChapterIndex + " , chapterAll : " + chapterAll
+                    + " , durPageIndex : " + durPageIndex + " , durPageAll : " + durPageAll);
+
             if (setDataListener != null) {
                 setDataListener.setDataFinish(this, durChapterIndex, chapterAll, durPageIndex, durPageAll, this.durPageIndex);
             }
