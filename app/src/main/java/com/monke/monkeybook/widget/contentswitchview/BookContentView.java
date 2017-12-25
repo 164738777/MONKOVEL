@@ -122,6 +122,16 @@ public class BookContentView extends FrameLayout {
         finishLoading();
     }
 
+    /**
+     * 加载小说页面的核心函数, 对成员变量赋值
+     * @param tag 时间
+     * @param title 当前章节标题
+     * @param contentLines 当前所浏览页面的全部内容List<String>
+     * @param durChapterIndex 当前章节下标
+     * @param chapterAll 当前小说章节总数
+     * @param durPageIndex 当前页面所在的章节的页码
+     * @param durPageAll 当前章节的总页数
+     */
     public void updateData(long tag, String title, List<String> contentLines, int durChapterIndex, int chapterAll, int durPageIndex, int durPageAll) {
         if (tag == qTag) {
 
