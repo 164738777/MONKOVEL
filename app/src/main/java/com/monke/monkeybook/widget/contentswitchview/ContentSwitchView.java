@@ -37,7 +37,6 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
 
     private BookContentView durPageView;
     private List<BookContentView> viewContents;
-    private OnBookReadInitListener bookReadInitListener;
     private ReadBookControl readBookControl;
 
     private int durHeight = 0;
@@ -82,13 +81,27 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
      * 设置监听阅读TextView初始化完成时候
      */
     public void bookReadInit(OnBookReadInitListener bookReadInitListener){
-        this.bookReadInitListener = bookReadInitListener;
-        durPageView.getTvContent().getViewTreeObserver().addOnGlobalLayoutListener(layoutInitListener);
+        // 用于反馈阅读TextView的初始化完成。
+        durPageView.getTvContent().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (bookReadInitListener != null) {
+                    bookReadInitListener.success();
+                }
+                durPageView.getTvContent().getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 
     public void startLoading() {
         setDurHeightAndInitLoadDataListenerData();
-        durPageView.getTvContent().getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+
+        durPageView.getTvContent().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                setDurHeightAndInitLoadDataListenerData();
+            }
+        });
     }
 
     private void setDurHeightAndInitLoadDataListenerData() {
@@ -294,7 +307,7 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
 
     /**
      * 点击进入某本小说时候初始化数据
-     * @param durChapterIndex 章节下表
+     * @param durChapterIndex 章节下标
      * @param chapterAll   总章节数
      * @param durPageIndex  当前页面所在的章节的页数下标
      */
@@ -367,6 +380,7 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
      */
     private void addNextPage(int durChapterIndex, int chapterAll, int durPageIndex, int pageAll) {
         if (state == STATE_ONLY_NEXT || state == STATE_PRE_AND_NEXT) {
+            Log.d("MyLog", "addNextPage: no create");
             int temp = (state == STATE_ONLY_NEXT ? 1 : 2);
             if (pageAll > 0 && durPageIndex >= 0 && durPageIndex < pageAll - 1) {
                 viewContents.get(temp).loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex) : "", durChapterIndex, chapterAll, durPageIndex + 1);
@@ -374,6 +388,7 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
                 viewContents.get(temp).loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex + 1) : "", durChapterIndex + 1, chapterAll, BookContentView.DUR_PAGE_INDEX_BEGIN);
             }
         } else if (state == STATE_ONLY_PRE || state == STATE_NONE) {
+            Log.d("MyLog", "addNextPage: create");
             BookContentView next = new BookContentView(getContext());
             next.setReadBookControl(readBookControl);
             next.setLoadDataListener(loadDataListener, this);
@@ -389,6 +404,7 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
 
     private void addPrePage(int durChapterIndex, int chapterAll, int durPageIndex, int pageAll) {
         if (state == STATE_ONLY_NEXT || state == STATE_NONE) {
+            Log.d("MyLog", "addPrePage: no create");
             BookContentView pre = new BookContentView(getContext());
             pre.setReadBookControl(readBookControl);
             pre.setLoadDataListener(loadDataListener, this);
@@ -400,6 +416,7 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
             viewContents.add(0, pre);
             this.addView(pre);
         } else if (state == STATE_ONLY_PRE || state == STATE_PRE_AND_NEXT) {
+            Log.d("MyLog", "addPrePage: create");
             if (pageAll > 0 && durPageIndex >= 0 && durPageIndex > 0) {
                 viewContents.get(0).loadData(null != loadDataListener ? loadDataListener.getChapterTitle(durChapterIndex) : "", durChapterIndex, chapterAll, durPageIndex - 1);
             } else {
@@ -445,24 +462,6 @@ public class ContentSwitchView extends FrameLayout implements BookContentView.Se
     private void noNext() {
         Toast.makeText(getContext(), "没有下一页", Toast.LENGTH_SHORT).show();
     }
-
-    // 用于反馈阅读TextView的初始化完成。
-    private ViewTreeObserver.OnGlobalLayoutListener layoutInitListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            if (bookReadInitListener != null) {
-                bookReadInitListener.success();
-            }
-            durPageView.getTvContent().getViewTreeObserver().removeOnGlobalLayoutListener(layoutInitListener);
-        }
-    };
-
-    private ViewTreeObserver.OnGlobalLayoutListener layoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            setDurHeightAndInitLoadDataListenerData();
-        }
-    };
 
     public Paint getTextPaint() {
         return durPageView.getTvContent().getPaint();

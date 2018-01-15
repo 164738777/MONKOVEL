@@ -99,6 +99,7 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
 
     @Override
     protected void initData() {
+        // TODO: 2018/1/13 本地书籍没有执行saveProgress操作, 待搞清楚这里写的用处
         mPresenter.saveProgress();
         menuTopIn = AnimationUtils.loadAnimation(this, R.anim.anim_readbook_top_in);
         menuTopIn.setAnimationListener(new Animation.AnimationListener() {
@@ -171,12 +172,6 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
         chapterListView = findViewById(R.id.clp_chapterlist);
     }
 
-    @Override
-    public void setHpbReadProgressMax(int count) {
-        // 设置最大章节进度
-        hpbReadProgress.setMaxProgress(count);
-    }
-
     private void initCsvBook() {
         csvBook.bookReadInit(new ContentSwitchView.OnBookReadInitListener() {
             @Override
@@ -185,6 +180,160 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
                 mPresenter.initData(ReadBookActivity.this);
             }
         });
+
+        csvBook.setLoadDataListener(new ContentSwitchView.LoadDataListener() {
+            @Override
+            public void loaddata(BookContentView bookContentView, long qtag, int chapterIndex, int pageIndex) {
+                mPresenter.loadContent(bookContentView, qtag, chapterIndex, pageIndex);
+            }
+
+            @Override
+            public void updateProgress(int chapterIndex, int pageIndex) {
+                mPresenter.updateProgress(chapterIndex, pageIndex);
+
+                if (mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size() > 0) {
+                    atvTitle.setText(mPresenter.getBookShelf().getBookInfoBean().getChapterlist().get(mPresenter.getBookShelf().getDurChapter()).getDurChapterName());
+                } else {
+                    atvTitle.setText("无章节");
+                }
+                if (hpbReadProgress.getDurProgress() != chapterIndex + 1) {
+                    hpbReadProgress.setDurProgress(chapterIndex + 1);
+                }
+            }
+
+            @Override
+            public String getChapterTitle(int chapterIndex) {
+                return mPresenter.getChapterTitle(chapterIndex);
+            }
+
+            @Override
+            public void initData(int lineCount) {
+                mPresenter.setPageLineCount(lineCount);
+                mPresenter.initContent();
+            }
+
+            @Override
+            public void showMenu() {
+                flMenu.setVisibility(View.VISIBLE);
+                llMenuTop.startAnimation(menuTopIn);
+                llMenuBottom.startAnimation(menuBottomIn);
+            }
+        });
+    }
+
+    @Override
+    protected void bindEvent() {
+        // 调节章节进度条
+        hpbReadProgress.setProgressListener(new OnProgressListener() {
+            @Override
+            public void moveStartProgress(float dur) {
+
+            }
+
+            @Override
+            public void durProgressChange(float dur) {
+
+            }
+
+            @Override
+            public void moveStopProgress(float dur) {
+                int realDur = (int) Math.ceil(dur);
+                if (realDur < 1) {
+                    realDur = 1;
+                }
+                if ((realDur - 1) != mPresenter.getBookShelf().getDurChapter()) {
+                    csvBook.setInitData(realDur - 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DUR_PAGE_INDEX_BEGIN);
+                }
+                if (hpbReadProgress.getDurProgress() != realDur) {
+                    hpbReadProgress.setDurProgress(realDur);
+                }
+            }
+
+            @Override
+            public void setDurProgress(float dur) {
+                if (hpbReadProgress.getMaxProgress() == 1) {
+                    tvPre.setEnabled(false);
+                    tvNext.setEnabled(false);
+                } else {
+                    if (dur == 1) {
+                        tvPre.setEnabled(false);
+                        tvNext.setEnabled(true);
+                    } else if (dur == hpbReadProgress.getMaxProgress()) {
+                        tvPre.setEnabled(true);
+                        tvNext.setEnabled(false);
+                    } else {
+                        tvPre.setEnabled(true);
+                        tvNext.setEnabled(true);
+                    }
+                }
+            }
+        });
+        // 返回按钮
+        ivReturn.setOnClickListener(v -> finish());
+        // 更多按钮
+        ivMenuMore.setOnClickListener(v ->
+                readBookMenuMorePop.showAsDropDown(ivMenuMore, 0, DensityUtil.dp2px(ReadBookActivity.this, -3.5f)));
+
+        // '上一章'
+        tvPre.setOnClickListener(v ->
+                csvBook.setInitData(mPresenter.getBookShelf().getDurChapter() - 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DUR_PAGE_INDEX_BEGIN));
+        // '下一章'
+        tvNext.setOnClickListener(v ->
+                csvBook.setInitData(mPresenter.getBookShelf().getDurChapter() + 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DUR_PAGE_INDEX_BEGIN));
+
+        // '目录'
+        llCatalog.setOnClickListener(v -> {
+            llMenuTop.startAnimation(menuTopOut);
+            llMenuBottom.startAnimation(menuBottomOut);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    chapterListView.show(mPresenter.getBookShelf().getDurChapter());
+                }
+            }, menuTopOut.getDuration());
+        });
+
+        // '亮度'
+        llLight.setOnClickListener(v -> {
+            llMenuTop.startAnimation(menuTopOut);
+            llMenuBottom.startAnimation(menuBottomOut);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    windowLightPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
+                }
+            }, menuTopOut.getDuration());
+        });
+
+        // '字体'
+        llFont.setOnClickListener(v -> {
+            llMenuTop.startAnimation(menuTopOut);
+            llMenuBottom.startAnimation(menuBottomOut);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    fontPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
+                }
+            }, menuTopOut.getDuration());
+        });
+
+        // '设置'
+        llSetting.setOnClickListener(v -> {
+            llMenuTop.startAnimation(menuTopOut);
+            llMenuBottom.startAnimation(menuBottomOut);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    moreSettingPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
+                }
+            }, menuTopOut.getDuration());
+        });
+    }
+
+    @Override
+    public void setHpbReadProgressMax(int count) {
+        // 设置最大章节进度
+        hpbReadProgress.setMaxProgress(count);
     }
 
     @Override
@@ -247,7 +396,7 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
                         mPresenter.addToShelf(new ReadBookPresenterImpl.OnAddListner() {
                             @Override
                             public void addSuccess() {
-                                List<DownloadChapterBean> result = new ArrayList<DownloadChapterBean>();
+                                List<DownloadChapterBean> result = new ArrayList<>();
                                 for (int i = start; i <= end; i++) {
                                     DownloadChapterBean item = new DownloadChapterBean();
                                     item.setNoteUrl(mPresenter.getBookShelf().getNoteUrl());
@@ -269,173 +418,6 @@ public class ReadBookActivity extends MBaseActivity<IBookReadPresenter> implemen
         });
 
         moreSettingPop = new MoreSettingPop(this);
-    }
-
-    @Override
-    protected void bindEvent() {
-        hpbReadProgress.setProgressListener(new OnProgressListener() {
-            @Override
-            public void moveStartProgress(float dur) {
-
-            }
-
-            @Override
-            public void durProgressChange(float dur) {
-
-            }
-
-            @Override
-            public void moveStopProgress(float dur) {
-                int realDur = (int) Math.ceil(dur);
-                if (realDur < 1) {
-                    realDur = 1;
-                }
-                if ((realDur - 1) != mPresenter.getBookShelf().getDurChapter()) {
-                    csvBook.setInitData(realDur - 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DUR_PAGE_INDEX_BEGIN);
-                }
-                if (hpbReadProgress.getDurProgress() != realDur) {
-                    hpbReadProgress.setDurProgress(realDur);
-                }
-            }
-
-            @Override
-            public void setDurProgress(float dur) {
-                if (hpbReadProgress.getMaxProgress() == 1) {
-                    tvPre.setEnabled(false);
-                    tvNext.setEnabled(false);
-                } else {
-                    if (dur == 1) {
-                        tvPre.setEnabled(false);
-                        tvNext.setEnabled(true);
-                    } else if (dur == hpbReadProgress.getMaxProgress()) {
-                        tvPre.setEnabled(true);
-                        tvNext.setEnabled(false);
-                    } else {
-                        tvPre.setEnabled(true);
-                        tvNext.setEnabled(true);
-                    }
-                }
-            }
-        });
-        ivReturn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        ivMenuMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                readBookMenuMorePop.showAsDropDown(ivMenuMore, 0, DensityUtil.dp2px(ReadBookActivity.this, -3.5f));
-            }
-        });
-        csvBook.setLoadDataListener(new ContentSwitchView.LoadDataListener() {
-            @Override
-            public void loaddata(BookContentView bookContentView, long qtag, int chapterIndex, int pageIndex) {
-                mPresenter.loadContent(bookContentView, qtag, chapterIndex, pageIndex);
-            }
-
-            @Override
-            public void updateProgress(int chapterIndex, int pageIndex) {
-                mPresenter.updateProgress(chapterIndex, pageIndex);
-
-                if (mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size() > 0) {
-                    atvTitle.setText(mPresenter.getBookShelf().getBookInfoBean().getChapterlist().get(mPresenter.getBookShelf().getDurChapter()).getDurChapterName());
-                } else {
-                    atvTitle.setText("无章节");
-                }
-                if (hpbReadProgress.getDurProgress() != chapterIndex + 1) {
-                    hpbReadProgress.setDurProgress(chapterIndex + 1);
-                }
-            }
-
-            @Override
-            public String getChapterTitle(int chapterIndex) {
-                return mPresenter.getChapterTitle(chapterIndex);
-            }
-
-            @Override
-            public void initData(int lineCount) {
-                mPresenter.setPageLineCount(lineCount);
-                mPresenter.initContent();
-            }
-
-            @Override
-            public void showMenu() {
-                flMenu.setVisibility(View.VISIBLE);
-                llMenuTop.startAnimation(menuTopIn);
-                llMenuBottom.startAnimation(menuBottomIn);
-            }
-        });
-
-        tvPre.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                csvBook.setInitData(mPresenter.getBookShelf().getDurChapter() - 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DUR_PAGE_INDEX_BEGIN);
-            }
-        });
-        tvNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                csvBook.setInitData(mPresenter.getBookShelf().getDurChapter() + 1, mPresenter.getBookShelf().getBookInfoBean().getChapterlist().size(), BookContentView.DUR_PAGE_INDEX_BEGIN);
-            }
-        });
-
-        llCatalog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                llMenuTop.startAnimation(menuTopOut);
-                llMenuBottom.startAnimation(menuBottomOut);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        chapterListView.show(mPresenter.getBookShelf().getDurChapter());
-                    }
-                }, menuTopOut.getDuration());
-            }
-        });
-
-        llLight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                llMenuTop.startAnimation(menuTopOut);
-                llMenuBottom.startAnimation(menuBottomOut);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        windowLightPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
-                    }
-                }, menuTopOut.getDuration());
-            }
-        });
-
-        llFont.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                llMenuTop.startAnimation(menuTopOut);
-                llMenuBottom.startAnimation(menuBottomOut);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        fontPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
-                    }
-                }, menuTopOut.getDuration());
-            }
-        });
-
-        llSetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                llMenuTop.startAnimation(menuTopOut);
-                llMenuBottom.startAnimation(menuBottomOut);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        moreSettingPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
-                    }
-                }, menuTopOut.getDuration());
-            }
-        });
     }
 
     @Override

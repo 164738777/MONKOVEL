@@ -210,7 +210,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
                     separateParagraphToLines(bookContentBean.getDurCapterContent())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.io())
-                            .compose(((BaseActivity) mView.getContext()).<List<String>>bindUntilEvent(ActivityEvent.DESTROY))
+                            .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                             .subscribe(new SimpleObserver<List<String>>() {
                                 @Override
                                 public void onNext(List<String> value) {
@@ -234,12 +234,12 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
                     @Override
                     public void subscribe(ObservableEmitter<ReadBookContentBean> e) throws Exception {
                         List<BookContentBean> tempList = DbHelper.getInstance().getmDaoSession().getBookContentBeanDao().queryBuilder().where(BookContentBeanDao.Properties.DurChapterUrl.eq(bookShelf.getBookInfoBean().getChapterlist().get(chapterIndex).getDurChapterUrl())).build().list();
-                        e.onNext(new ReadBookContentBean(tempList == null ? new ArrayList<BookContentBean>() : tempList, finalPageIndex1));
+                        e.onNext(new ReadBookContentBean(tempList == null ? new ArrayList<>() : tempList, finalPageIndex1));
                         e.onComplete();
                     }
                 }).observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.newThread())
-                        .compose(((BaseActivity) mView.getContext()).<ReadBookContentBean>bindUntilEvent(ActivityEvent.DESTROY))
+                        .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                         .subscribe(new SimpleObserver<ReadBookContentBean>() {
                             @Override
                             public void onNext(ReadBookContentBean tempList) {
@@ -306,6 +306,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
     @Override
     public void saveProgress() {
         if (bookShelf != null) {
+            Log.d("MyLog", "saveProgress: 开始");
             Observable.create(new ObservableOnSubscribe<BookShelfBean>() {
                 @Override
                 public void subscribe(ObservableEmitter<BookShelfBean> e) throws Exception {
@@ -378,7 +379,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<IBookReadView> impl
             }
         }).subscribeOn(Schedulers.io())
                 // 指定onDestroy方法被调用时取消订阅，释放context引用，防止内存泄漏。需要在subscribeOn方法之后使用
-                .compose(((BaseActivity) mView.getContext()).<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
+                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
